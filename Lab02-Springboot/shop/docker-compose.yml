@@ -1,0 +1,16 @@
+# Same database as the shop-db container: docker compose up -d
+# The password is read from the DB_PASSWORD environment variable (never committed).
+services:
+  shop-db:
+    image: postgres:16
+    container_name: shop-db
+    environment:
+      POSTGRES_DB: shop
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD first}
+    ports:
+      - "5433:5432"
+    volumes:
+      - shop-data:/var/lib/postgresql/data
+
+volumes:
+  shop-data:
