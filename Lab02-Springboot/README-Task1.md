@@ -152,12 +152,4 @@ Only the Gradle wrapper (`gradlew`, `gradlew.bat`, `gradle/wrapper/`) and the bu
 are committed; `.gradle/` and `build/` are in `.gitignore`.
 ![Gradle bootRun](img/gradle-bootrun.png)
 ![Gradle bootRun](img/gradle-api.png)
-### 6. Git
 
-`.gitignore` contains `target/`, so build output is not committed. The task ends with the tag `task-1`:
-
-```
-$ git add -A
-$ git commit -m "Task 1: HelloController and README"
-$ git tag task-1
-```
