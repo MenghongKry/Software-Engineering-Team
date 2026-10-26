@@ -124,10 +124,3 @@ $ ./mvnw test
 
 The Spring test takes about 1.5 s (it starts the whole container), the plain test about 0.01 s.
 
-### 7. Git
-
-```
-$ git add -A
-$ git commit -m "Task 2: beans, DI, profiles and WelcomeService test"
-$ git tag task-2
-```
