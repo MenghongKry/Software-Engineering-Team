@@ -1,0 +1,86 @@
+{
+    "info": {
+        "_postman_id": "00f36f5a-fdf7-4f21-b109-81d60b5d0b4e",
+        "name": "shop_request",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "description": ""
+    },
+    "item": [
+        {
+            "name": "/api/products",
+            "item": [
+                {
+                    "name": "GET_with_q",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "http://localhost:8080/api/products?q=Mouse",
+                            "query": [
+                                {
+                                    "key": "q",
+                                    "value": "Mouse"
+                                }
+                            ],
+                            "variable": [],
+                            "path": [
+                                "api",
+                                "products"
+                            ],
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8080"
+                        }
+                    }
+                },
+                {
+                    "name": "GET_with_id",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "http://localhost:8080/api/products/4",
+                            "path": [
+                                "api",
+                                "products",
+                                "4"
+                            ],
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8080"
+                        }
+                    }
+                },
+                {
+                    "name": "POST_create_product",
+                    "request": {
+                        "method": "POST",
+                        "url": {
+                            "raw": "http://localhost:8080/api/products",
+                            "path": [
+                                "api",
+                                "products"
+                            ],
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8080"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            },
+                            "raw": "{\n  \"name\": \"Laptop\",\n  \"price\": 67,\n  \"stock\": 1\n}"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
