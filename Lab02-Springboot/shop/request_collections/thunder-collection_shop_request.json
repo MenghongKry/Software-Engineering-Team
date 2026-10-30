@@ -1,0 +1,73 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "shop_request",
+    "collectionId": "a09e7e2e-b0da-4d19-aa35-c30d03208800",
+    "dateExported": "2026-10-27T07:11:59.661Z",
+    "version": "1.4",
+    "folders": [
+        {
+            "_id": "3c633cd7-292b-4524-883a-729509386b88",
+            "name": "/api/products",
+            "containerId": "",
+            "created": "2026-10-27T03:41:05.814Z",
+            "sortNum": 30000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "a1d9e1da-51d7-479c-bbb1-80146645b309",
+            "colId": "a09e7e2e-b0da-4d19-aa35-c30d03208800",
+            "containerId": "3c633cd7-292b-4524-883a-729509386b88",
+            "name": "GET_with_q",
+            "url": "http://localhost:8080/api/products?q=Mouse",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2026-10-27T03:41:36.644Z",
+            "modified": "2026-10-27T03:41:36.644Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "q",
+                    "value": "Mouse",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "66222b7b-0cb4-4604-91bc-32adf6c6dc49",
+            "colId": "a09e7e2e-b0da-4d19-aa35-c30d03208800",
+            "containerId": "3c633cd7-292b-4524-883a-729509386b88",
+            "name": "GET_with_id",
+            "url": "http://localhost:8080/api/products/4",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2026-10-27T03:46:23.780Z",
+            "modified": "2026-10-27T03:46:23.780Z",
+            "headers": []
+        },
+        {
+            "_id": "60d40f8f-4d17-44b6-81ef-c31f82751a5a",
+            "colId": "a09e7e2e-b0da-4d19-aa35-c30d03208800",
+            "containerId": "3c633cd7-292b-4524-883a-729509386b88",
+            "name": "POST_create_product",
+            "url": "http://localhost:8080/api/products",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2026-10-27T03:48:09.797Z",
+            "modified": "2026-10-27T03:48:09.797Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": [
+                    "{",
+                    "  \"name\": \"Laptop\",",
+                    "  \"price\": 67,",
+                    "  \"stock\": 1",
+                    "}"
+                ],
+                "form": []
+            }
+        }
+    ],
+    "ref": "ZYEZDvTd7lyeN082wa2DNxmSyR7cpXKgsGCZEDDTM4tHfw7tYXSCK_I_yReRYwB0TSFxMKfCUYBsR_LePhwG_A"
+}
