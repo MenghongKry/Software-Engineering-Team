@@ -3,17 +3,18 @@ package edu.itc.se.shop.web;
 import java.util.Comparator;
 import java.util.List;
 
+import edu.itc.se.shop.order.OrderExceptions;
 import edu.itc.se.shop.service.InsufficientStockException;
 import edu.itc.se.shop.service.ProductNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice(annotations = RestController.class)
 public class ApiExceptionHandler {
@@ -45,6 +46,30 @@ public class ApiExceptionHandler {
     public ProblemDetail handleDuplicateKey(DuplicateKeyException exception) {
         return problem(HttpStatus.CONFLICT, "A record with the same unique value already exists.");
     }
+
+    // ---------- Challenge: order errors ----------
+
+    @ExceptionHandler(OrderExceptions.NotFound.class)
+    public ProblemDetail handleOrderNotFound(OrderExceptions.NotFound exception) {
+        return problem(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(OrderExceptions.CustomerNotFound.class)
+    public ProblemDetail handleCustomerNotFound(OrderExceptions.CustomerNotFound exception) {
+        return problem(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(OrderExceptions.InvalidState.class)
+    public ProblemDetail handleInvalidState(OrderExceptions.InvalidState exception) {
+        return problem(HttpStatus.CONFLICT, exception.getMessage());
+    }
+
+    @ExceptionHandler(OrderExceptions.InvalidOrder.class)
+    public ProblemDetail handleInvalidOrder(OrderExceptions.InvalidOrder exception) {
+        return problem(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    // ---------- fallback (keep last) ----------
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleUnexpected(Exception exception) {
