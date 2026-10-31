@@ -15,4 +15,3 @@ public class HelloController {
         return new Greeting("Hi there, " + name + "!", Instant.now());
     }
 }
-    
