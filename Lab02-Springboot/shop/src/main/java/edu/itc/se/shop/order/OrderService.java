@@ -1,22 +1,28 @@
 package edu.itc.se.shop.order;
 
 
-import static java.util.Comparator.comparingLong;
-import static java.util.stream.Collectors.groupingBy;
-
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import static java.util.Comparator.comparingLong;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import static java.util.stream.Collectors.groupingBy;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import edu.itc.se.shop.domain.Page;
+
 import edu.itc.se.shop.config.ShopProperties;
-import edu.itc.se.shop.repository.CustomerRepository;
+import edu.itc.se.shop.domain.Page;
 import edu.itc.se.shop.domain.Product;
+import edu.itc.se.shop.repository.CustomerRepository;
 import edu.itc.se.shop.repository.ProductRepository;
 import edu.itc.se.shop.service.InsufficientStockException;
 import edu.itc.se.shop.service.Notifier;
 import edu.itc.se.shop.service.ProductNotFoundException;
+
 
 @Service
 public class OrderService {
@@ -38,6 +44,7 @@ public class OrderService {
     }
 
     // ---------- 2. Placing an order ----------
+    @Audited
     @Transactional
     public OrderDto place(PlaceOrder cmd) {
         // 1. no duplicate productId
@@ -91,6 +98,7 @@ public class OrderService {
     }
 
     // ---------- 4. Cancelling ----------
+    @Audited
     @Transactional
     public OrderDto cancel(long id) {
         Order order = orders.findById(id).orElseThrow(() -> new OrderExceptions.NotFound(id));
