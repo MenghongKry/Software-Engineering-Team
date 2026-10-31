@@ -8,4 +8,7 @@ public class InsufficientStockException extends IllegalStateException {
     public InsufficientStockException(long productId) {
         super("not enough stock in product " + productId);
     }
+
+    public InsufficientStockException(String s) {
+    }
 }
