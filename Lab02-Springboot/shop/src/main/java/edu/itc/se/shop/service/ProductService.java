@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import edu.itc.se.shop.domain.Product;
 import edu.itc.se.shop.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class ProductService {
+    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     private final ProductRepository repo;
 
     public ProductService(ProductRepository repo) {
@@ -29,6 +32,7 @@ public class ProductService {
     public Product create(String name, BigDecimal price, int stock) {
         Product product = new Product(null, name, price, stock);
         long id = repo.insert(product);
+        log.info("created product {} '{}'", id, name);
         return new Product(id, name, price, stock);
     }
 

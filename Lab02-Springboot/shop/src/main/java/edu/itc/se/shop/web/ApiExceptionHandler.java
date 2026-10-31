@@ -11,9 +11,13 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RestController;
 
-@RestControllerAdvice
+@RestControllerAdvice(annotations = RestController.class)
 public class ApiExceptionHandler {
+    private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidation(MethodArgumentNotValidException exception) {
@@ -22,6 +26,7 @@ public class ApiExceptionHandler {
                 .map(error -> new FieldErrorDetail(error.getField(), error.getDefaultMessage()))
                 .sorted(Comparator.comparing(FieldErrorDetail::field))
                 .toList();
+        log.warn("validation failed: {}", errors);
         problem.setProperty("errors", errors);
         return problem;
     }
@@ -43,6 +48,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleUnexpected(Exception exception) {
+        log.error("unexpected error", exception);
         return problem(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.");
     }
 
