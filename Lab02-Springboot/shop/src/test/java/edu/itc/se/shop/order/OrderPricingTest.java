@@ -1,10 +1,9 @@
 package edu.itc.se.shop.order;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 class OrderPricingTest {
@@ -20,12 +19,14 @@ class OrderPricingTest {
             )
         );
 
+        BigDecimal actual = OrderPricing.total(
+            lines,
+            new BigDecimal("0.10")
+        );
+
         assertEquals(
             new BigDecimal("120.78"),
-            OrderPricing.total(
-                lines,
-                new BigDecimal("0.10")
-            )
+            actual
         );
     }
 }
