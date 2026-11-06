@@ -58,4 +58,15 @@ public class OrderLine {
     public Long getId() {
         return id;
     }
+
+    public int getQuantity() { return quantity; }
+    public Money getUnitPrice() { return unitPrice; }
+    public Order getOrder() { return order; }
+    public Product getProduct() { return product; }
+
+    @Override public boolean equals(Object o) {
+        return this == o || (o instanceof OrderLine other && id != null && id.equals(other.getId()));
+    }
+    @Override public int hashCode() { return OrderLine.class.hashCode(); }
+    @Override public String toString() { return "OrderLine[id=%d, quantity=%d]".formatted(id, quantity); }
 }

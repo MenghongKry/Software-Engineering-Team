@@ -62,4 +62,15 @@ public class Customer {
     public Long getId() {
         return id;
     }
+
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+
+    @Override public boolean equals(Object o) {
+        return this == o || (o instanceof Customer other && id != null && id.equals(other.getId()));
+    }
+    @Override public int hashCode() { return Customer.class.hashCode(); }
+    @Override public String toString() {
+        return "Customer[id=%d, name=%s, email=%s]".formatted(id, name, email);
+    }
 }
