@@ -10,6 +10,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 
 @Entity
 @Table(name = "product")
@@ -87,5 +93,28 @@ public class Product {
             throw new IllegalArgumentException("Stock cannot be negative");
         }
         this.stock = stock;
+    }
+
+    @ManyToMany
+    @JoinTable(
+            name = "product_tag",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags = new HashSet<>();
+
+    public Set<Tag> getTags() { return Collections.unmodifiableSet(tags); }
+
+    public void tag(Tag tag) {
+        tags.add(tag);
+        tag.addProduct(this);     // keep both sides in sync
+    }
+
+    @Override public boolean equals(Object o) {
+        return this == o || (o instanceof Product other && id != null && id.equals(other.getId()));
+    }
+    @Override public int hashCode() { return Product.class.hashCode(); }
+    @Override public String toString() {
+        return "Product[id=%d, sku=%s, name=%s]".formatted(id, sku, name);
     }
 }
