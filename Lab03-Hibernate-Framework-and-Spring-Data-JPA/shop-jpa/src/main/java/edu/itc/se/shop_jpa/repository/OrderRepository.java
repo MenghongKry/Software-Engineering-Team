@@ -8,6 +8,9 @@ import edu.itc.se.shop_jpa.domain.OrderStatus;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import edu.itc.se.shop_jpa.web.dto.OrderSummary;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
@@ -31,4 +34,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select count(l) from OrderLine l where l.order.status = :status")
     long countLinesByStatus(@Param("status") OrderStatus status);
+
+    Page<OrderSummary> findByStatus(OrderStatus status, Pageable pageable);
 }
