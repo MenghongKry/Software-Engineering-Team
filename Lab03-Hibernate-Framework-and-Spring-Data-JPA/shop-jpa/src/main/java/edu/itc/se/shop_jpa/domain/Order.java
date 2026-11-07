@@ -50,6 +50,14 @@ public class Order {
         this.placedAt = Instant.now();
     }
 
+    public Order(Customer customer, Instant placedAt) {
+        this(customer);
+        this.placedAt = placedAt;
+    }
+
+    public void setStatus(OrderStatus status) { this.status = status; }
+    public long getVersion() { return version; }
+
     public Long getId() {
         return id;
     }
