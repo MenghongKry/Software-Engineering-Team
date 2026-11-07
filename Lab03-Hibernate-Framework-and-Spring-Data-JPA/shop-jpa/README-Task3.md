@@ -61,5 +61,14 @@ When no filter is given, no `WHERE` clause is generated. I collect only the non-
 `OrderRepositoryTest` (5 tests):
 
 ```
-<paste "Tests run: 5, Failures: 0, Errors: 0, Skipped: 0" here after Step 7>
+```
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.079 s -- in edu.itc.se.shop_jpa.OrderRepositoryTest
+```
+
+Lazy vs. fetch join, as seen in the test log. A plain `findById` runs two statements:
+```
+select o1_0.id,o1_0.customer_id,o1_0.placed_at,o1_0.status,o1_0.version from orders o1_0 where o1_0.id=?
+select l1_0.order_id,l1_0.id,l1_0.product_id,l1_0.quantity,l1_0.amount,l1_0.currency from order_line l1_0 where l1_0.order_id=?
+```
+`findWithLinesByCustomerEmail` runs one statement (`select distinct ... join order_line ... join product ...`).
 ```
