@@ -35,5 +35,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("select count(l) from OrderLine l where l.order.status = :status")
     long countLinesByStatus(@Param("status") OrderStatus status);
 
-    Page<OrderSummary> findByStatus(OrderStatus status, Pageable pageable);
+    @Query(value = """
+            select o.id as id, o.status as status, o.placedAt as placedAt,
+                   c.name as customerName
+              from Order o join o.customer c
+             where o.status = :status
+            """,
+            countQuery = "select count(o) from Order o where o.status = :status")
+    Page<OrderSummary> findByStatus(@Param("status") OrderStatus status, Pageable pageable);
 }
