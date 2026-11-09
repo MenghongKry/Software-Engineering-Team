@@ -65,11 +65,23 @@ I reproduced a situation where a column required by an entity was missing from t
 
 When the application started, Hibernate detected that the database structure did not match the entity mapping and reported a schema validation error.
 
+I renamed `sku` to `code` in `V1__init.sql` only (the entity still says `sku`). The exact error:
+
+```
+Caused by: org.hibernate.tool.schema.spi.SchemaManagementException: Schema validation: missing column [sku] in table [product]
+```
+
 **What I learned:** The database schema must contain all required columns defined by the entity mappings.
 
 ### Mismatch 2: Sequence Increment
 
 I reproduced a mismatch between the database sequence increment and the sequence configuration expected by Hibernate.
+
+I changed `CREATE SEQUENCE product_seq ... INCREMENT BY 50` to `INCREMENT BY 1` (the entity still has `allocationSize = 50`). The exact error:
+
+```
+Caused by: org.hibernate.MappingException: The increment size of the [product_seq] sequence is set to [50] in the entity mapping but the mapped database sequence increment size is [1]
+```
 
 This demonstrated that the sequence configuration in the database and Java entity mapping must be consistent.
 
