@@ -1,18 +1,23 @@
 package edu.itc.se.shop_jpa.repository;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import edu.itc.se.shop_jpa.domain.Category;
 import edu.itc.se.shop_jpa.domain.Product;
 
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import edu.itc.se.shop_jpa.web.dto.ProductView;
 
-public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
+public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product>,
+        ProductReportRepository {
 
     boolean existsBySku(String sku);
 
@@ -34,4 +39,14 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             """,
             countQuery = "select count(p) from Product p where p.category = :category")
     Page<ProductView> findByCategory(@Param("category") Category category, Pageable pageable);
+
+    //Challenge: stock reservation
+    /** SELECT ... FOR UPDATE: the row stays locked until the transaction ends. */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select p from Product p where p.id = :id")
+    Optional<Product> findForUpdate(@Param("id") Long id);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update Product p set p.stock = p.stock - :qty where p.id = :id and p.stock >= :qty")
+    int decrementStock(@Param("id") Long id, @Param("qty") int qty);
 }
