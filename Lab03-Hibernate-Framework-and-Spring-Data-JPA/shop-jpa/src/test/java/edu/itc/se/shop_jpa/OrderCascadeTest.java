@@ -83,9 +83,11 @@ class OrderCascadeTest {
         Long id = saveOrderWithTwoLines();
 
         Order loaded = em.find(Order.class, id);
+        long before = countLines();
         em.remove(loaded);
         em.flush();
 
-        assertEquals(0, countLines());
+        // relative count: other test classes may have committed lines to the shared H2 database
+        assertEquals(before - 2, countLines());
     }
 }

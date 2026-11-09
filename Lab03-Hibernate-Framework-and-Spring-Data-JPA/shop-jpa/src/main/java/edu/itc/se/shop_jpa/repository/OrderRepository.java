@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import edu.itc.se.shop_jpa.domain.Order;
 import edu.itc.se.shop_jpa.domain.OrderStatus;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Page;
@@ -43,4 +44,17 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             """,
             countQuery = "select count(o) from Order o where o.status = :status")
     Page<OrderSummary> findByStatus(@Param("status") OrderStatus status, Pageable pageable);
+
+
+
+    /** loads only the orders; every order.getLines() is a separate SELECT later (N+1). */
+    List<Order> findByStatus(OrderStatus status);
+
+    /** join fetch loads orders and their lines in one statement. */
+    @Query("select distinct o from Order o join fetch o.lines where o.status = :s")
+    List<Order> findByStatusWithLines(@Param("s") OrderStatus s);
+
+    /** an entity graph tells Hibernate to fetch lines and their products in the same SELECT. */
+    @EntityGraph(attributePaths = {"lines", "lines.product"})
+    List<Order> findWithGraphByStatus(OrderStatus status);
 }

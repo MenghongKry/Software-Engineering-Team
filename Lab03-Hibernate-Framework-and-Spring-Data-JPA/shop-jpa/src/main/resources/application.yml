@@ -12,6 +12,13 @@ spring:
     properties:
       hibernate:
         generate_statistics: true
+        # Task 5: JDBC batching (group up to 50 INSERT/UPDATE statements into one round trip)
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+        # default_batch_fetch_size is deliberately NOT set here: it would turn the
+        # "51 statements" N+1 demo into 3 statements. DefaultBatchFetchSizeTest shows its effect.
   h2:
     console:
       enabled: true
