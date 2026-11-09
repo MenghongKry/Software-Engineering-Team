@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * Task 5: V2__indexes.sql is applied after V1, and H2 uses the new indexes.
+ * Task 5: V2__indexes.sql (and later V3) are applied after V1, and H2 uses the new indexes.
  * The EXPLAIN output is printed so it can be copied into README-Task5.md.
  */
 @SpringBootTest
@@ -25,7 +25,7 @@ class MigrationTest {
                         + " where \"version\" is not null and \"success\" order by \"installed_rank\"",
                 String.class);
 
-        assertThat(rows).containsExactly("1 - init", "2 - indexes");
+        assertThat(rows).containsExactly("1 - init", "2 - indexes", "3 - product version");
     }
 
     @Test

@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +47,11 @@ public class Product {
     @Column(nullable = false)
     private int stock;
 
+    /** Challenge: optimistic locking for the stock reservation (column added by V3). */
+    @Version
+    @Column(nullable = false)
+    private long version;
+
     protected Product() {}
 
     public Product(String sku, String name, Money price, Category category) {
@@ -78,6 +84,10 @@ public class Product {
 
     public int getStock() {
         return stock;
+    }
+
+    public long getVersion() {
+        return version;
     }
 
     public void setName(String name) {
