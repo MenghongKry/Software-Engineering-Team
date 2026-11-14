@@ -45,7 +45,8 @@ public class DataSeeder implements ApplicationRunner {
         List<Customer> cs = customers.saveAll(List.of(
                 customer("Ada Lovelace",  "ada@example.com",   "London"),
                 customer("Grace Hopper",  "grace@example.com", "New York"),
-                customer("Alan Turing",   "alan@example.com",  "Manchester")));
+                customer("Alan Turing",   "alan@example.com",  "Manchester"),
+                customer("Menghong Kry",  "menghong@example.com", "Phnom Penh")));
 
         // --- 12 products ---
         List<Product> ps = products.saveAll(List.of(
