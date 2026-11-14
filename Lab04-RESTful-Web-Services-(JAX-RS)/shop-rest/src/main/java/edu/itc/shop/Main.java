@@ -1,4 +1,4 @@
-package edu.itc;
+package edu.itc.shop;
 
 public class Main {
     public static void main(String[] args) {
