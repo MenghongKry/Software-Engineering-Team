@@ -10,6 +10,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 import edu.itc.shop.domain.InMemoryProductRepository;
 import edu.itc.shop.domain.ProductRepository;
+import edu.itc.shop.domain.ProductService;
 
 public class Main {
 
@@ -21,29 +22,22 @@ public class Main {
      * + one shared repository.
      */
     public static ResourceConfig config() {
-
         return new ResourceConfig()
                 .packages("edu.itc.shop.api")
                 .register(new AbstractBinder() {
                     @Override
                     protected void configure() {
-                        bind(new InMemoryProductRepository())
-                                .to(ProductRepository.class);
+                        ProductRepository repo = new InMemoryProductRepository();
+                        bind(repo).to(ProductRepository.class);
+                        bind(new ProductService(repo)).to(ProductService.class);
                     }
                 });
     }
 
     public static void main(String[] args) throws Exception {
-
-        HttpServer server =
-                GrizzlyHttpServerFactory.createHttpServer(BASE, config());
-
-        Runtime.getRuntime().addShutdownHook(
-                new Thread(server::shutdownNow)
-        );
-
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(BASE, config());
+        Runtime.getRuntime().addShutdownHook(new Thread(server::shutdownNow));
         System.out.println("shop-rest listening on " + BASE);
-
         Thread.currentThread().join();
     }
 }
