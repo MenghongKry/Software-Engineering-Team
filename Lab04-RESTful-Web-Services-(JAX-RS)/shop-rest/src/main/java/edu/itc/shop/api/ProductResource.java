@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.UriInfo;
 
 import edu.itc.shop.api.dto.ProductDto;
 import edu.itc.shop.api.dto.StockChange;
+import edu.itc.shop.api.filter.Compress;
 import edu.itc.shop.api.params.ProductFilter;
 import edu.itc.shop.domain.Product;
 import edu.itc.shop.domain.ProductService;
@@ -31,6 +32,7 @@ public class ProductResource {
     }
 
     @GET
+    @Compress
     public List<ProductDto> list(@BeanParam @Valid ProductFilter f) {
         return service.search(f.toQuery()).stream().map(ProductDto::from).toList();
     }

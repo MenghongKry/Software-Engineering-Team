@@ -1,0 +1,392 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "shop_rest_task4",
+  "collectionId": "eb61ecb9-3517-46d7-bc84-37b8f8954570",
+  "dateExported": "2026-11-18T04:20:00.000Z",
+  "version": "1.4",
+  "folders": [
+    {
+      "_id": "c2ee42e3-d2d7-49da-bdf3-823c99631b68",
+      "name": "Task 4 - Providers and filters",
+      "containerId": "",
+      "created": "2026-11-18T04:20:00.000Z",
+      "sortNum": 10000
+    }
+  ],
+  "requests": [
+    {
+      "_id": "207f167f-5b9d-4e1c-8e8f-87646bd8d1c3",
+      "colId": "eb61ecb9-3517-46d7-bc84-37b8f8954570",
+      "containerId": "c2ee42e3-d2d7-49da-bdf3-823c99631b68",
+      "name": "1_POST_without_api_key_401",
+      "url": "http://localhost:8080/api/products",
+      "method": "POST",
+      "sortNum": 10000,
+      "created": "2026-11-18T04:20:00.000Z",
+      "modified": "2026-11-18T04:20:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"name\": \"Teapot\",",
+          "  \"sku\": \"TP-01\",",
+          "  \"price\": 31.00,",
+          "  \"stock\": 5",
+          "}"
+        ],
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "401"
+        },
+        {
+          "type": "res-header",
+          "custom": "www-authenticate",
+          "action": "equal",
+          "value": "ApiKey realm=\"shop\""
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        },
+        {
+          "type": "res-header",
+          "custom": "x-correlation-id",
+          "action": "exists",
+          "value": ""
+        },
+        {
+          "type": "res-header",
+          "custom": "access-control-allow-origin",
+          "action": "equal",
+          "value": "http://localhost:5173"
+        }
+      ]
+    },
+    {
+      "_id": "48870d60-bf0e-4938-833f-b7c81032f43c",
+      "colId": "eb61ecb9-3517-46d7-bc84-37b8f8954570",
+      "containerId": "c2ee42e3-d2d7-49da-bdf3-823c99631b68",
+      "name": "2_POST_wrong_api_key_401",
+      "url": "http://localhost:8080/api/products",
+      "method": "POST",
+      "sortNum": 20000,
+      "created": "2026-11-18T04:20:00.000Z",
+      "modified": "2026-11-18T04:20:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "X-Api-Key",
+          "value": "wrong-key"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"name\": \"Teapot\",",
+          "  \"sku\": \"TP-01\",",
+          "  \"price\": 31.00,",
+          "  \"stock\": 5",
+          "}"
+        ],
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "401"
+        },
+        {
+          "type": "res-header",
+          "custom": "www-authenticate",
+          "action": "exists",
+          "value": ""
+        },
+        {
+          "type": "res-header",
+          "custom": "x-correlation-id",
+          "action": "exists",
+          "value": ""
+        },
+        {
+          "type": "res-header",
+          "custom": "access-control-allow-origin",
+          "action": "equal",
+          "value": "http://localhost:5173"
+        }
+      ]
+    },
+    {
+      "_id": "2425c078-a2a6-4953-b802-bc553824f242",
+      "colId": "eb61ecb9-3517-46d7-bc84-37b8f8954570",
+      "containerId": "c2ee42e3-d2d7-49da-bdf3-823c99631b68",
+      "name": "3_POST_right_api_key_201",
+      "url": "http://localhost:8080/api/products",
+      "method": "POST",
+      "sortNum": 30000,
+      "created": "2026-11-18T04:20:00.000Z",
+      "modified": "2026-11-18T04:20:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"name\": \"Teapot\",",
+          "  \"sku\": \"TP-01\",",
+          "  \"price\": 31.00,",
+          "  \"stock\": 5",
+          "}"
+        ],
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "res-header",
+          "custom": "location",
+          "action": "exists",
+          "value": ""
+        },
+        {
+          "type": "res-header",
+          "custom": "x-correlation-id",
+          "action": "exists",
+          "value": ""
+        },
+        {
+          "type": "res-header",
+          "custom": "access-control-allow-origin",
+          "action": "equal",
+          "value": "http://localhost:5173"
+        }
+      ]
+    },
+    {
+      "_id": "167cd40e-1dab-403e-b08e-80c7adb73d62",
+      "colId": "eb61ecb9-3517-46d7-bc84-37b8f8954570",
+      "containerId": "c2ee42e3-d2d7-49da-bdf3-823c99631b68",
+      "name": "4_OPTIONS_preflight_200",
+      "url": "http://localhost:8080/api/products",
+      "method": "OPTIONS",
+      "sortNum": 40000,
+      "created": "2026-11-18T04:20:00.000Z",
+      "modified": "2026-11-18T04:20:00.000Z",
+      "headers": [
+        {
+          "name": "Origin",
+          "value": "http://localhost:5173"
+        },
+        {
+          "name": "Access-Control-Request-Method",
+          "value": "POST"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "access-control-allow-origin",
+          "action": "equal",
+          "value": "http://localhost:5173"
+        },
+        {
+          "type": "res-header",
+          "custom": "access-control-allow-methods",
+          "action": "equal",
+          "value": "GET,POST,PUT,PATCH,DELETE"
+        },
+        {
+          "type": "res-header",
+          "custom": "access-control-allow-headers",
+          "action": "equal",
+          "value": "Content-Type,X-Api-Key,X-Correlation-Id,If-Match"
+        }
+      ]
+    },
+    {
+      "_id": "efd0940d-88ab-4e9e-bcc5-cddb447512fd",
+      "colId": "eb61ecb9-3517-46d7-bc84-37b8f8954570",
+      "containerId": "c2ee42e3-d2d7-49da-bdf3-823c99631b68",
+      "name": "5_GET_correlation_id_echoed",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "GET",
+      "sortNum": 50000,
+      "created": "2026-11-18T04:20:00.000Z",
+      "modified": "2026-11-18T04:20:00.000Z",
+      "headers": [
+        {
+          "name": "X-Correlation-Id",
+          "value": "order-check-42"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "x-correlation-id",
+          "action": "equal",
+          "value": "order-check-42"
+        },
+        {
+          "type": "res-header",
+          "custom": "access-control-allow-origin",
+          "action": "equal",
+          "value": "http://localhost:5173"
+        }
+      ]
+    },
+    {
+      "_id": "c122d34a-7319-428e-a212-1f5cd849c64c",
+      "colId": "eb61ecb9-3517-46d7-bc84-37b8f8954570",
+      "containerId": "c2ee42e3-d2d7-49da-bdf3-823c99631b68",
+      "name": "6_GET_list_gzip",
+      "url": "http://localhost:8080/api/products",
+      "method": "GET",
+      "sortNum": 60000,
+      "created": "2026-11-18T04:20:00.000Z",
+      "modified": "2026-11-18T04:20:00.000Z",
+      "headers": [
+        {
+          "name": "Accept-Encoding",
+          "value": "gzip"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-encoding",
+          "action": "equal",
+          "value": "gzip"
+        },
+        {
+          "type": "res-header",
+          "custom": "vary",
+          "action": "equal",
+          "value": "Accept-Encoding"
+        },
+        {
+          "type": "res-header",
+          "custom": "x-correlation-id",
+          "action": "exists",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "_id": "21631b83-be46-45a9-b79e-f335b9793e39",
+      "colId": "eb61ecb9-3517-46d7-bc84-37b8f8954570",
+      "containerId": "c2ee42e3-d2d7-49da-bdf3-823c99631b68",
+      "name": "7_GET_list_no_gzip",
+      "url": "http://localhost:8080/api/products",
+      "method": "GET",
+      "sortNum": 70000,
+      "created": "2026-11-18T04:20:00.000Z",
+      "modified": "2026-11-18T04:20:00.000Z",
+      "headers": [
+        {
+          "name": "Accept-Encoding",
+          "value": "identity"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-encoding",
+          "action": "notexists",
+          "value": ""
+        },
+        {
+          "type": "res-header",
+          "custom": "x-correlation-id",
+          "action": "exists",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "_id": "77b3844f-e8ce-4490-8762-4cb03b4ddd50",
+      "colId": "eb61ecb9-3517-46d7-bc84-37b8f8954570",
+      "containerId": "c2ee42e3-d2d7-49da-bdf3-823c99631b68",
+      "name": "8_GET_one_never_gzip",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "GET",
+      "sortNum": 80000,
+      "created": "2026-11-18T04:20:00.000Z",
+      "modified": "2026-11-18T04:20:00.000Z",
+      "headers": [
+        {
+          "name": "Accept-Encoding",
+          "value": "gzip"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-encoding",
+          "action": "notexists",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}
