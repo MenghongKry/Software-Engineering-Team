@@ -32,6 +32,7 @@ public class ProblemMapper implements ExceptionMapper<Throwable> {
             var problem = new Problem("about:blank", original.getStatusInfo().getReasonPhrase(),
                     status, wae.getMessage(), path, null);
             return Response.fromResponse(original)
+                    .status(original.getStatusInfo())          // keeps custom reason phrases (422)
                     .type(Problem.MEDIA_TYPE)
                     .header(HttpHeaders.CONTENT_LENGTH, null)
                     .entity(problem)

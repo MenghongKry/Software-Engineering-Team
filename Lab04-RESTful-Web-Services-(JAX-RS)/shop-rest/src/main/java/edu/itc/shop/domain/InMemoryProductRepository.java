@@ -22,6 +22,12 @@ public class InMemoryProductRepository implements ProductRepository {
 
         save(new Product(0, "Tea", "TE-01",
                 new BigDecimal("4.20"), 0, 0));
+
+        // Task 5: 30 more products (ids 4..33) so that paging is visible
+        for (int i = 4; i <= 33; i++) {
+            save(new Product(0, "Item " + i, String.format("IT-%02d", i),
+                    new BigDecimal(i + ".00"), i % 5 == 0 ? 0 : i, 0));
+        }
     }
 
     @Override

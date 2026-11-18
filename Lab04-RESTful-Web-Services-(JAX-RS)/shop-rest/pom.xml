@@ -60,6 +60,14 @@
       <artifactId>jersey-bean-validation</artifactId>         <!-- Hibernate Validator -->
     </dependency>
 
+    <!-- Challenge: OpenAPI annotations (only needed at build time, the plugin reads them) -->
+    <dependency>
+      <groupId>org.eclipse.microprofile.openapi</groupId>
+      <artifactId>microprofile-openapi-api</artifactId>
+      <version>4.1</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -78,6 +86,31 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.3</version>
+      </plugin>
+      <!-- Challenge: scans the compiled resources and writes target/classes/META-INF/openapi.yaml -->
+      <plugin>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-open-api-maven-plugin</artifactId>
+        <version>4.4.1</version>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals><goal>generate-schema</goal></goals>
+          </execution>
+        </executions>
+        <configuration>
+          <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+          <schemaFilename>openapi</schemaFilename>
+          <outputFileTypeFilter>YAML</outputFileTypeFilter>
+          <openApiVersion>3.1.0</openApiVersion>
+          <infoTitle>shop-rest API</infoTitle>
+          <infoVersion>1.0.0</infoVersion>
+          <infoDescription>Product catalogue and orders, Lab-04 (Jakarta REST 4.0 on Jersey + Grizzly)</infoDescription>
+          <scanPackages>edu.itc.shop</scanPackages>
+          <scanDependenciesDisable>true</scanDependenciesDisable>
+          <!-- do not read the previous build's META-INF/openapi.yaml back in as input -->
+          <enableStandardStaticFiles>false</enableStandardStaticFiles>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

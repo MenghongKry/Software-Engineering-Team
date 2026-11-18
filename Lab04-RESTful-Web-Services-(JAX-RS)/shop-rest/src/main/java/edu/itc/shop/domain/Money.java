@@ -22,8 +22,9 @@ public record Money(BigDecimal amount, String currency) {
         return new Money(new BigDecimal(m.group(1)), m.group(2));
     }
 
-    public boolean isEuro() {
-        return "EUR".equals(currency);
+    /** Not named isEuro(): JSON-B would turn an isX() method into an extra "isEuro" property. */
+    public boolean inCurrency(String code) {
+        return currency.equals(code);
     }
 
     @Override
