@@ -26,7 +26,7 @@ mvn -q verify
 
 This compiles, generates the OpenAPI document and runs `ShopApiTest` (23 JerseyTests, one per status code plus the order flows). The result is in `target/surefire-reports/`.
 
-By hand: every task has a curl transcript in `docs/` that can be replayed against a freshly started server. A Thunder Client collection for Task 4 is in `test-requests/`.
+By hand: every task has a curl transcript in `docs/` that can be replayed against a freshly started server. Postman (`postman_shop_rest_*.postman_collection.json`) and Thunder Client (`thunder-collection_*.json`) collections for Task 4, Task 5 and the challenge are in `test-requests/` (restart the server before running the Task 5 or challenge collection, they expect fresh data). `DEMO.md` is the step-by-step demo script.
 
 ## Endpoints
 

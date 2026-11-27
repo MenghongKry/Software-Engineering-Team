@@ -1,0 +1,730 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "shop_rest_challenge",
+  "collectionId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+  "dateExported": "2026-11-18T15:30:00.000Z",
+  "version": "1.4",
+  "folders": [
+    {
+      "_id": "5bedd5ba-9f34-40c1-b1b8-06bcb85320bb",
+      "name": "Place order + idempotency",
+      "containerId": "",
+      "created": "2026-11-18T15:30:00.000Z",
+      "sortNum": 10000
+    },
+    {
+      "_id": "fc9eeb8d-a9a7-4892-9737-c5b50cbec236",
+      "name": "HATEOAS flow",
+      "containerId": "",
+      "created": "2026-11-18T15:30:00.000Z",
+      "sortNum": 20000
+    },
+    {
+      "_id": "9538f6b3-644f-44fe-afb3-8afff8bb81a9",
+      "name": "OpenAPI",
+      "containerId": "",
+      "created": "2026-11-18T15:30:00.000Z",
+      "sortNum": 30000
+    }
+  ],
+  "requests": [
+    {
+      "_id": "630d5747-d401-4574-acd8-65c155c98eb1",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "5bedd5ba-9f34-40c1-b1b8-06bcb85320bb",
+      "name": "1_POST_order_201",
+      "url": "http://localhost:8080/api/orders",
+      "method": "POST",
+      "sortNum": 10000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Idempotency-Key",
+          "value": "7c1e"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "res-header",
+          "custom": "location",
+          "action": "contains",
+          "value": "/api/orders/o-1001"
+        },
+        {
+          "type": "res-header",
+          "custom": "idempotency-replayed",
+          "action": "equal",
+          "value": "false"
+        },
+        {
+          "type": "res-header",
+          "custom": "link",
+          "action": "contains",
+          "value": "rel=\"pay\""
+        },
+        {
+          "type": "json-query",
+          "custom": "json.status",
+          "action": "equal",
+          "value": "NEW"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "59d431d1-1e3a-4518-86db-686d760c42af",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "5bedd5ba-9f34-40c1-b1b8-06bcb85320bb",
+      "name": "2_POST_same_again_replayed",
+      "url": "http://localhost:8080/api/orders",
+      "method": "POST",
+      "sortNum": 20000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Idempotency-Key",
+          "value": "7c1e"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "res-header",
+          "custom": "idempotency-replayed",
+          "action": "equal",
+          "value": "true"
+        },
+        {
+          "type": "res-header",
+          "custom": "location",
+          "action": "contains",
+          "value": "/api/orders/o-1001"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "268b5cd3-857e-465b-9767-484f53a616ac",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "5bedd5ba-9f34-40c1-b1b8-06bcb85320bb",
+      "name": "3_GET_stock_reserved_once",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "GET",
+      "sortNum": 30000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.stock",
+          "action": "equal",
+          "value": "10"
+        }
+      ]
+    },
+    {
+      "_id": "f6e13b90-019f-4653-b416-c49d8269de28",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "5bedd5ba-9f34-40c1-b1b8-06bcb85320bb",
+      "name": "4_POST_same_key_other_body_422",
+      "url": "http://localhost:8080/api/orders",
+      "method": "POST",
+      "sortNum": 40000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Idempotency-Key",
+          "value": "7c1e"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "422"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 2,\n      \"quantity\": 1\n    }\n  ]\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "9cab6c2f-8aad-4d88-8018-defe4b8575de",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "5bedd5ba-9f34-40c1-b1b8-06bcb85320bb",
+      "name": "5_POST_without_key_428",
+      "url": "http://localhost:8080/api/orders",
+      "method": "POST",
+      "sortNum": 50000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "428"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "d1c60e62-51e2-4b56-a099-971ee843f8ab",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "5bedd5ba-9f34-40c1-b1b8-06bcb85320bb",
+      "name": "6_POST_unknown_product_404",
+      "url": "http://localhost:8080/api/orders",
+      "method": "POST",
+      "sortNum": 60000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Idempotency-Key",
+          "value": "k-404"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "404"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 999,\n      \"quantity\": 1\n    }\n  ]\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "39347317-734d-4b2e-9a0d-afa6acf84812",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "5bedd5ba-9f34-40c1-b1b8-06bcb85320bb",
+      "name": "7_POST_no_stock_409",
+      "url": "http://localhost:8080/api/orders",
+      "method": "POST",
+      "sortNum": 70000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Idempotency-Key",
+          "value": "k-409"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "409"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 3,\n      \"quantity\": 1\n    }\n  ]\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "859a2abc-b295-44af-8a10-8d9bdef30eab",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "5bedd5ba-9f34-40c1-b1b8-06bcb85320bb",
+      "name": "8_POST_invalid_quantity_400",
+      "url": "http://localhost:8080/api/orders",
+      "method": "POST",
+      "sortNum": 80000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Idempotency-Key",
+          "value": "k-400"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "400"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 0\n    }\n  ]\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "65e771a1-7fa9-4391-801e-576cdef62e64",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "5bedd5ba-9f34-40c1-b1b8-06bcb85320bb",
+      "name": "9_POST_without_api_key_401",
+      "url": "http://localhost:8080/api/orders",
+      "method": "POST",
+      "sortNum": 90000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Idempotency-Key",
+          "value": "k-401"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "401"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "f8eb0eb1-b18b-4728-91c4-d95997a24b94",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "fc9eeb8d-a9a7-4892-9737-c5b50cbec236",
+      "name": "10_GET_order_self",
+      "url": "http://localhost:8080/api/orders/o-1001",
+      "method": "GET",
+      "sortNum": 100000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "link",
+          "action": "contains",
+          "value": "rel=\"cancel\""
+        }
+      ]
+    },
+    {
+      "_id": "3e58ae90-38ca-49b3-aba1-1da1a63892be",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "fc9eeb8d-a9a7-4892-9737-c5b50cbec236",
+      "name": "11_PUT_pay_200",
+      "url": "http://localhost:8080/api/orders/o-1001/payment",
+      "method": "PUT",
+      "sortNum": 110000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.status",
+          "action": "equal",
+          "value": "PAID"
+        },
+        {
+          "type": "res-header",
+          "custom": "link",
+          "action": "notcontains",
+          "value": "rel=\"pay\""
+        }
+      ]
+    },
+    {
+      "_id": "996c9a60-964d-4532-8936-f3fe62719ba2",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "fc9eeb8d-a9a7-4892-9737-c5b50cbec236",
+      "name": "12_PUT_pay_again_409",
+      "url": "http://localhost:8080/api/orders/o-1001/payment",
+      "method": "PUT",
+      "sortNum": 120000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "409"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ]
+    },
+    {
+      "_id": "1f766c51-5e29-4b3a-96cc-f37b059461a2",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "fc9eeb8d-a9a7-4892-9737-c5b50cbec236",
+      "name": "13_DELETE_cancel_paid_409",
+      "url": "http://localhost:8080/api/orders/o-1001",
+      "method": "DELETE",
+      "sortNum": 130000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "409"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ]
+    },
+    {
+      "_id": "dc1222e0-b037-4cb6-b7a9-a44adf315b78",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "fc9eeb8d-a9a7-4892-9737-c5b50cbec236",
+      "name": "14_POST_second_order_201",
+      "url": "http://localhost:8080/api/orders",
+      "method": "POST",
+      "sortNum": 140000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Idempotency-Key",
+          "value": "second"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "res-header",
+          "custom": "location",
+          "action": "contains",
+          "value": "/api/orders/o-1002"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 2,\n      \"quantity\": 5\n    }\n  ]\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "af7523fc-d45b-413c-a976-f25361d8378b",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "fc9eeb8d-a9a7-4892-9737-c5b50cbec236",
+      "name": "15_GET_mug_stock_35",
+      "url": "http://localhost:8080/api/products/2",
+      "method": "GET",
+      "sortNum": 150000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.stock",
+          "action": "equal",
+          "value": "35"
+        }
+      ]
+    },
+    {
+      "_id": "5892f5ff-5e9c-4f84-aec8-15707b577272",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "fc9eeb8d-a9a7-4892-9737-c5b50cbec236",
+      "name": "16_DELETE_cancel_200",
+      "url": "http://localhost:8080/api/orders/o-1002",
+      "method": "DELETE",
+      "sortNum": 160000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.status",
+          "action": "equal",
+          "value": "CANCELLED"
+        }
+      ]
+    },
+    {
+      "_id": "e13fcd08-c7f5-452a-a73f-6b38377bdbfc",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "fc9eeb8d-a9a7-4892-9737-c5b50cbec236",
+      "name": "17_GET_mug_stock_back_40",
+      "url": "http://localhost:8080/api/products/2",
+      "method": "GET",
+      "sortNum": 170000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.stock",
+          "action": "equal",
+          "value": "40"
+        }
+      ]
+    },
+    {
+      "_id": "c756d85c-f216-4d2b-9f9b-3ac906a08bcf",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "fc9eeb8d-a9a7-4892-9737-c5b50cbec236",
+      "name": "18_GET_unknown_order_404",
+      "url": "http://localhost:8080/api/orders/o-9999",
+      "method": "GET",
+      "sortNum": 180000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "404"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ]
+    },
+    {
+      "_id": "8118d4e7-18f7-49c7-b6d1-2e429a3f84a6",
+      "colId": "a75110e5-c32d-4065-b92a-594d1c263dfe",
+      "containerId": "9538f6b3-644f-44fe-afb3-8afff8bb81a9",
+      "name": "19_GET_openapi_yaml",
+      "url": "http://localhost:8080/api/openapi",
+      "method": "GET",
+      "sortNum": 190000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/yaml"
+        }
+      ]
+    }
+  ]
+}

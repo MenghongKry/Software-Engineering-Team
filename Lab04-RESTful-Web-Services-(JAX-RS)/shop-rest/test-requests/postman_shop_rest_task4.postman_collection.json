@@ -1,0 +1,351 @@
+{
+  "info": {
+    "_postman_id": "7d1bc1fe-778b-40a8-9bd9-72df90fac6e5",
+    "name": "shop_rest_task4",
+    "description": "Restart the server (mvn -q compile exec:java) before running, then run top to bottom.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Task 4 - Providers and filters",
+      "item": [
+        {
+          "name": "1_POST_without_api_key_401",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Teapot\",\n  \"sku\": \"TP-01\",\n  \"price\": 31.00,\n  \"stock\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"www-authenticate = \" + \"ApiKey realm=\\\"shop\\\"\", () => pm.expect(pm.response.headers.get(\"www-authenticate\")).to.eql(\"ApiKey realm=\\\"shop\\\"\"));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));",
+                  "pm.test(\"x-correlation-id exists\", () => pm.expect(pm.response.headers.has(\"x-correlation-id\")).to.be.true);",
+                  "pm.test(\"access-control-allow-origin = \" + \"http://localhost:5173\", () => pm.expect(pm.response.headers.get(\"access-control-allow-origin\")).to.eql(\"http://localhost:5173\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2_POST_wrong_api_key_401",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "wrong-key"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Teapot\",\n  \"sku\": \"TP-01\",\n  \"price\": 31.00,\n  \"stock\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"www-authenticate exists\", () => pm.expect(pm.response.headers.has(\"www-authenticate\")).to.be.true);",
+                  "pm.test(\"x-correlation-id exists\", () => pm.expect(pm.response.headers.has(\"x-correlation-id\")).to.be.true);",
+                  "pm.test(\"access-control-allow-origin = \" + \"http://localhost:5173\", () => pm.expect(pm.response.headers.get(\"access-control-allow-origin\")).to.eql(\"http://localhost:5173\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3_POST_right_api_key_201",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Teapot\",\n  \"sku\": \"TP-01\",\n  \"price\": 31.00,\n  \"stock\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"location exists\", () => pm.expect(pm.response.headers.has(\"location\")).to.be.true);",
+                  "pm.test(\"x-correlation-id exists\", () => pm.expect(pm.response.headers.has(\"x-correlation-id\")).to.be.true);",
+                  "pm.test(\"access-control-allow-origin = \" + \"http://localhost:5173\", () => pm.expect(pm.response.headers.get(\"access-control-allow-origin\")).to.eql(\"http://localhost:5173\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4_OPTIONS_preflight_200",
+          "request": {
+            "method": "OPTIONS",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:5173"
+              },
+              {
+                "key": "Access-Control-Request-Method",
+                "value": "POST"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"access-control-allow-origin = \" + \"http://localhost:5173\", () => pm.expect(pm.response.headers.get(\"access-control-allow-origin\")).to.eql(\"http://localhost:5173\"));",
+                  "pm.test(\"access-control-allow-methods = \" + \"GET,POST,PUT,PATCH,DELETE\", () => pm.expect(pm.response.headers.get(\"access-control-allow-methods\")).to.eql(\"GET,POST,PUT,PATCH,DELETE\"));",
+                  "pm.test(\"access-control-allow-headers = \" + \"Content-Type,X-Api-Key,X-Correlation-Id,If-Match\", () => pm.expect(pm.response.headers.get(\"access-control-allow-headers\")).to.eql(\"Content-Type,X-Api-Key,X-Correlation-Id,If-Match\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5_GET_correlation_id_echoed",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-Id",
+                "value": "order-check-42"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"x-correlation-id = \" + \"order-check-42\", () => pm.expect(pm.response.headers.get(\"x-correlation-id\")).to.eql(\"order-check-42\"));",
+                  "pm.test(\"access-control-allow-origin = \" + \"http://localhost:5173\", () => pm.expect(pm.response.headers.get(\"access-control-allow-origin\")).to.eql(\"http://localhost:5173\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6_GET_list_gzip",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Encoding",
+                "value": "gzip"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"content-encoding = \" + \"gzip\", () => pm.expect(pm.response.headers.get(\"content-encoding\")).to.eql(\"gzip\"));",
+                  "pm.test(\"vary = \" + \"Accept-Encoding\", () => pm.expect(pm.response.headers.get(\"vary\")).to.eql(\"Accept-Encoding\"));",
+                  "pm.test(\"x-correlation-id exists\", () => pm.expect(pm.response.headers.has(\"x-correlation-id\")).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7_GET_list_no_gzip",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Encoding",
+                "value": "identity"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"content-encoding absent\", () => pm.expect(pm.response.headers.has(\"content-encoding\")).to.be.false);",
+                  "pm.test(\"x-correlation-id exists\", () => pm.expect(pm.response.headers.has(\"x-correlation-id\")).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8_GET_one_never_gzip",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Encoding",
+                "value": "gzip"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"content-encoding absent\", () => pm.expect(pm.response.headers.has(\"content-encoding\")).to.be.false);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "apiKey",
+      "value": "demo-123"
+    }
+  ]
+}

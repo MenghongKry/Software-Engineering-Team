@@ -1,0 +1,768 @@
+{
+  "info": {
+    "_postman_id": "de8dd16b-4a90-4adf-84cb-6c5163feff72",
+    "name": "shop_rest_task5",
+    "description": "Restart the server (mvn -q compile exec:java) before running, then run top to bottom.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Pagination",
+      "item": [
+        {
+          "name": "1_GET_page1_size10_links",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products?page=1&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"x-total-count = \" + \"33\", () => pm.expect(pm.response.headers.get(\"x-total-count\")).to.eql(\"33\"));",
+                  "pm.test(\"link contains \" + \"rel=\\\"prev\\\"\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"link\").map(x => x.value).join(\", \")).to.include(\"rel=\\\"prev\\\"\"));",
+                  "pm.test(\"link contains \" + \"rel=\\\"next\\\"\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"link\").map(x => x.value).join(\", \")).to.include(\"rel=\\\"next\\\"\"));",
+                  "pm.test(\"link contains \" + \"rel=\\\"last\\\"\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"link\").map(x => x.value).join(\", \")).to.include(\"rel=\\\"last\\\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2_GET_last_page_no_next",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products?page=3&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "3"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"link does not contain \" + \"rel=\\\"next\\\"\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"link\").map(x => x.value).join(\", \")).to.not.include(\"rel=\\\"next\\\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3_GET_size_500_400",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products?size=500",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "size",
+                  "value": "500"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4_GET_filtered_total_q_item",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products?q=item&size=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "item"
+                },
+                {
+                  "key": "size",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"x-total-count = \" + \"30\", () => pm.expect(pm.response.headers.get(\"x-total-count\")).to.eql(\"30\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ETag and conditional PUT",
+      "item": [
+        {
+          "name": "5_GET_one_ETag_CacheControl",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"etag = \" + \"\\\"1\\\"\", () => pm.expect(pm.response.headers.get(\"etag\")).to.eql(\"\\\"1\\\"\"));",
+                  "pm.test(\"cache-control contains \" + \"max-age=60\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"cache-control\").map(x => x.value).join(\", \")).to.include(\"max-age=60\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6_GET_If-None-Match_304",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "If-None-Match",
+                "value": "\"1\""
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 304\", () => pm.response.to.have.status(304));",
+                  "pm.test(\"etag = \" + \"\\\"1\\\"\", () => pm.expect(pm.response.headers.get(\"etag\")).to.eql(\"\\\"1\\\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7_PUT_without_If-Match_428",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kettle XL\",\n  \"sku\": \"KT-01\",\n  \"price\": 29.9,\n  \"stock\": 12\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 428\", () => pm.response.to.have.status(428));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8_PUT_stale_If-Match_412",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "If-Match",
+                "value": "\"0\""
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kettle XL\",\n  \"sku\": \"KT-01\",\n  \"price\": 29.9,\n  \"stock\": 12\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 412\", () => pm.response.to.have.status(412));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "9_PUT_right_If-Match_200_new_ETag",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "If-Match",
+                "value": "\"1\""
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kettle XL\",\n  \"sku\": \"KT-01\",\n  \"price\": 29.9,\n  \"stock\": 12\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"etag = \" + \"\\\"2\\\"\", () => pm.expect(pm.response.headers.get(\"etag\")).to.eql(\"\\\"2\\\"\"));",
+                  "pm.test(\"json.name = \" + \"Kettle XL\", () => pm.expect(String(pm.response.json().name).toLowerCase()).to.eql(\"Kettle XL\".toLowerCase()));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10_PUT_same_old_tag_again_412",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "If-Match",
+                "value": "\"1\""
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kettle XL\",\n  \"sku\": \"KT-01\",\n  \"price\": 29.9,\n  \"stock\": 12\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 412\", () => pm.response.to.have.status(412));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Versioning by media type",
+      "item": [
+        {
+          "name": "11_GET_v1_plain_json",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"content-type = \" + \"application/json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12_GET_v1_vendor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/vnd.shop.v1+json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"content-type = \" + \"application/vnd.shop.v1+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/vnd.shop.v1+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13_GET_v2_vendor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/vnd.shop.v2+json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"content-type = \" + \"application/vnd.shop.v2+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/vnd.shop.v2+json\"));",
+                  "pm.test(\"json.price.currency = \" + \"EUR\", () => pm.expect(String(pm.response.json().price.currency).toLowerCase()).to.eql(\"EUR\".toLowerCase()));",
+                  "pm.test(\"json.available = \" + \"true\", () => pm.expect(String(pm.response.json().available).toLowerCase()).to.eql(\"true\".toLowerCase()));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "14_GET_unknown_Accept_406",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/csv"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 406\", () => pm.response.to.have.status(406));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Reviews sub-resource",
+      "item": [
+        {
+          "name": "15_POST_review_201",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1",
+                "reviews"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stars\": 5,\n  \"author\": \"Ana\",\n  \"text\": \"Boils fast.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"location contains \" + \"/api/products/1/reviews/1\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"location\").map(x => x.value).join(\", \")).to.include(\"/api/products/1/reviews/1\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16_POST_invalid_review_400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1",
+                "reviews"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stars\": 9,\n  \"author\": \"\",\n  \"text\": \"Bad\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "17_GET_reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1",
+                "reviews"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"json[0].author = \" + \"Ana\", () => pm.expect(String(pm.response.json()[0].author).toLowerCase()).to.eql(\"Ana\".toLowerCase()));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "18_GET_reviews_of_999_404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/999/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "999",
+                "reviews"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "apiKey",
+      "value": "demo-123"
+    }
+  ]
+}

@@ -1,0 +1,812 @@
+{
+  "info": {
+    "_postman_id": "dd436662-cb39-4945-b222-f0f1ae0dd705",
+    "name": "shop_rest_challenge",
+    "description": "Restart the server (mvn -q compile exec:java) before running, then run top to bottom.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Place order + idempotency",
+      "item": [
+        {
+          "name": "1_POST_order_201",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "7c1e"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"location contains \" + \"/api/orders/o-1001\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"location\").map(x => x.value).join(\", \")).to.include(\"/api/orders/o-1001\"));",
+                  "pm.test(\"idempotency-replayed = \" + \"false\", () => pm.expect(pm.response.headers.get(\"idempotency-replayed\")).to.eql(\"false\"));",
+                  "pm.test(\"link contains \" + \"rel=\\\"pay\\\"\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"link\").map(x => x.value).join(\", \")).to.include(\"rel=\\\"pay\\\"\"));",
+                  "pm.test(\"json.status = \" + \"NEW\", () => pm.expect(String(pm.response.json().status).toLowerCase()).to.eql(\"NEW\".toLowerCase()));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2_POST_same_again_replayed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "7c1e"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"idempotency-replayed = \" + \"true\", () => pm.expect(pm.response.headers.get(\"idempotency-replayed\")).to.eql(\"true\"));",
+                  "pm.test(\"location contains \" + \"/api/orders/o-1001\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"location\").map(x => x.value).join(\", \")).to.include(\"/api/orders/o-1001\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3_GET_stock_reserved_once",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"json.stock = \" + \"10\", () => pm.expect(String(pm.response.json().stock).toLowerCase()).to.eql(\"10\".toLowerCase()));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4_POST_same_key_other_body_422",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "7c1e"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 2,\n      \"quantity\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 422\", () => pm.response.to.have.status(422));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5_POST_without_key_428",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 428\", () => pm.response.to.have.status(428));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6_POST_unknown_product_404",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "k-404"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 999,\n      \"quantity\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7_POST_no_stock_409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "k-409"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 3,\n      \"quantity\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8_POST_invalid_quantity_400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "k-400"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 0\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "9_POST_without_api_key_401",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "k-401"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HATEOAS flow",
+      "item": [
+        {
+          "name": "10_GET_order_self",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/o-1001",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "o-1001"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"link contains \" + \"rel=\\\"cancel\\\"\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"link\").map(x => x.value).join(\", \")).to.include(\"rel=\\\"cancel\\\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11_PUT_pay_200",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/o-1001/payment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "o-1001",
+                "payment"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"json.status = \" + \"PAID\", () => pm.expect(String(pm.response.json().status).toLowerCase()).to.eql(\"PAID\".toLowerCase()));",
+                  "pm.test(\"link does not contain \" + \"rel=\\\"pay\\\"\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"link\").map(x => x.value).join(\", \")).to.not.include(\"rel=\\\"pay\\\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12_PUT_pay_again_409",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/o-1001/payment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "o-1001",
+                "payment"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13_DELETE_cancel_paid_409",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/o-1001",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "o-1001"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "14_POST_second_order_201",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "second"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lines\": [\n    {\n      \"productId\": 2,\n      \"quantity\": 5\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"location contains \" + \"/api/orders/o-1002\", () => pm.expect(pm.response.headers.filter(x => x.key.toLowerCase() === \"location\").map(x => x.value).join(\", \")).to.include(\"/api/orders/o-1002\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "15_GET_mug_stock_35",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "2"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"json.stock = \" + \"35\", () => pm.expect(String(pm.response.json().stock).toLowerCase()).to.eql(\"35\".toLowerCase()));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16_DELETE_cancel_200",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/o-1002",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "o-1002"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"json.status = \" + \"CANCELLED\", () => pm.expect(String(pm.response.json().status).toLowerCase()).to.eql(\"CANCELLED\".toLowerCase()));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "17_GET_mug_stock_back_40",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "2"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"json.stock = \" + \"40\", () => pm.expect(String(pm.response.json().stock).toLowerCase()).to.eql(\"40\".toLowerCase()));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "18_GET_unknown_order_404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/o-9999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "o-9999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"content-type = \" + \"application/problem+json\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/problem+json\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OpenAPI",
+      "item": [
+        {
+          "name": "19_GET_openapi_yaml",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/openapi",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "openapi"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"content-type = \" + \"application/yaml\", () => pm.expect(pm.response.headers.get(\"content-type\")).to.eql(\"application/yaml\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "apiKey",
+      "value": "demo-123"
+    }
+  ]
+}
