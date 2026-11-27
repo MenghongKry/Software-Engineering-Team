@@ -1,0 +1,670 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "shop_rest_task5",
+  "collectionId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+  "dateExported": "2026-11-18T15:30:00.000Z",
+  "version": "1.4",
+  "folders": [
+    {
+      "_id": "01b7521f-3740-4a16-9c04-ee2bb76696b3",
+      "name": "Pagination",
+      "containerId": "",
+      "created": "2026-11-18T15:30:00.000Z",
+      "sortNum": 10000
+    },
+    {
+      "_id": "099acd00-5120-4649-bbdb-a847b3e1f2ac",
+      "name": "ETag and conditional PUT",
+      "containerId": "",
+      "created": "2026-11-18T15:30:00.000Z",
+      "sortNum": 20000
+    },
+    {
+      "_id": "01e5f5da-3e2c-4bc9-bff4-c2d89e7e87af",
+      "name": "Versioning by media type",
+      "containerId": "",
+      "created": "2026-11-18T15:30:00.000Z",
+      "sortNum": 30000
+    },
+    {
+      "_id": "43748da8-7336-4ccd-bc21-a3120fed5dc3",
+      "name": "Reviews sub-resource",
+      "containerId": "",
+      "created": "2026-11-18T15:30:00.000Z",
+      "sortNum": 40000
+    }
+  ],
+  "requests": [
+    {
+      "_id": "50859ba1-f967-46e2-94f2-4e73e242b4a0",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "01b7521f-3740-4a16-9c04-ee2bb76696b3",
+      "name": "1_GET_page1_size10_links",
+      "url": "http://localhost:8080/api/products?page=1&size=10",
+      "method": "GET",
+      "sortNum": 10000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "x-total-count",
+          "action": "equal",
+          "value": "33"
+        },
+        {
+          "type": "res-header",
+          "custom": "link",
+          "action": "contains",
+          "value": "rel=\"prev\""
+        },
+        {
+          "type": "res-header",
+          "custom": "link",
+          "action": "contains",
+          "value": "rel=\"next\""
+        },
+        {
+          "type": "res-header",
+          "custom": "link",
+          "action": "contains",
+          "value": "rel=\"last\""
+        }
+      ]
+    },
+    {
+      "_id": "ff876ab9-7438-4f04-827e-551d93329e21",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "01b7521f-3740-4a16-9c04-ee2bb76696b3",
+      "name": "2_GET_last_page_no_next",
+      "url": "http://localhost:8080/api/products?page=3&size=10",
+      "method": "GET",
+      "sortNum": 20000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "link",
+          "action": "notcontains",
+          "value": "rel=\"next\""
+        }
+      ]
+    },
+    {
+      "_id": "c1aeb577-93af-40c1-82a7-a09245dbf05d",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "01b7521f-3740-4a16-9c04-ee2bb76696b3",
+      "name": "3_GET_size_500_400",
+      "url": "http://localhost:8080/api/products?size=500",
+      "method": "GET",
+      "sortNum": 30000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "400"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ]
+    },
+    {
+      "_id": "ed2742fd-3534-40e3-a626-a4439d8a1197",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "01b7521f-3740-4a16-9c04-ee2bb76696b3",
+      "name": "4_GET_filtered_total_q_item",
+      "url": "http://localhost:8080/api/products?q=item&size=5",
+      "method": "GET",
+      "sortNum": 40000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "x-total-count",
+          "action": "equal",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "_id": "d8b92f4f-c603-46a3-ac9d-2e4946807a0c",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "099acd00-5120-4649-bbdb-a847b3e1f2ac",
+      "name": "5_GET_one_ETag_CacheControl",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "GET",
+      "sortNum": 50000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "etag",
+          "action": "equal",
+          "value": "\"1\""
+        },
+        {
+          "type": "res-header",
+          "custom": "cache-control",
+          "action": "contains",
+          "value": "max-age=60"
+        }
+      ]
+    },
+    {
+      "_id": "6e96ecc8-5f28-46c1-92a3-82afdec981f0",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "099acd00-5120-4649-bbdb-a847b3e1f2ac",
+      "name": "6_GET_If-None-Match_304",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "GET",
+      "sortNum": 60000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "If-None-Match",
+          "value": "\"1\""
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "304"
+        },
+        {
+          "type": "res-header",
+          "custom": "etag",
+          "action": "equal",
+          "value": "\"1\""
+        }
+      ]
+    },
+    {
+      "_id": "6d464715-9bc6-484d-84fa-8d49a0e09a62",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "099acd00-5120-4649-bbdb-a847b3e1f2ac",
+      "name": "7_PUT_without_If-Match_428",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "PUT",
+      "sortNum": 70000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "428"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Kettle XL\",\n  \"sku\": \"KT-01\",\n  \"price\": 29.9,\n  \"stock\": 12\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "e0dc6ae1-cb27-4f79-8375-7cd68cb6cb34",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "099acd00-5120-4649-bbdb-a847b3e1f2ac",
+      "name": "8_PUT_stale_If-Match_412",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "PUT",
+      "sortNum": 80000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "If-Match",
+          "value": "\"0\""
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "412"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Kettle XL\",\n  \"sku\": \"KT-01\",\n  \"price\": 29.9,\n  \"stock\": 12\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "246721ae-da0a-4559-9cff-069a28b49646",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "099acd00-5120-4649-bbdb-a847b3e1f2ac",
+      "name": "9_PUT_right_If-Match_200_new_ETag",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "PUT",
+      "sortNum": 90000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "If-Match",
+          "value": "\"1\""
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "etag",
+          "action": "equal",
+          "value": "\"2\""
+        },
+        {
+          "type": "json-query",
+          "custom": "json.name",
+          "action": "equal",
+          "value": "Kettle XL"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Kettle XL\",\n  \"sku\": \"KT-01\",\n  \"price\": 29.9,\n  \"stock\": 12\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "091f530d-b53b-4ee9-908b-976ded93955b",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "099acd00-5120-4649-bbdb-a847b3e1f2ac",
+      "name": "10_PUT_same_old_tag_again_412",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "PUT",
+      "sortNum": 100000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "If-Match",
+          "value": "\"1\""
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "412"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Kettle XL\",\n  \"sku\": \"KT-01\",\n  \"price\": 29.9,\n  \"stock\": 12\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "231f0768-7ae7-4ff3-8a30-35d4c7179dd2",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "01e5f5da-3e2c-4bc9-bff4-c2d89e7e87af",
+      "name": "11_GET_v1_plain_json",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "GET",
+      "sortNum": 110000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "ebac880a-1285-419d-b121-28b8ac621f15",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "01e5f5da-3e2c-4bc9-bff4-c2d89e7e87af",
+      "name": "12_GET_v1_vendor",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "GET",
+      "sortNum": 120000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/vnd.shop.v1+json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/vnd.shop.v1+json"
+        }
+      ]
+    },
+    {
+      "_id": "52f781c1-b894-40cd-9273-6260d80cee38",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "01e5f5da-3e2c-4bc9-bff4-c2d89e7e87af",
+      "name": "13_GET_v2_vendor",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "GET",
+      "sortNum": 130000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/vnd.shop.v2+json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/vnd.shop.v2+json"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.price.currency",
+          "action": "equal",
+          "value": "EUR"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.available",
+          "action": "equal",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "_id": "7cebd077-77d0-47cf-90f1-5362b1aebe61",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "01e5f5da-3e2c-4bc9-bff4-c2d89e7e87af",
+      "name": "14_GET_unknown_Accept_406",
+      "url": "http://localhost:8080/api/products/1",
+      "method": "GET",
+      "sortNum": 140000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "text/csv"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "406"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ]
+    },
+    {
+      "_id": "4511428c-87d6-41a5-b625-3c270e36ea8f",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "43748da8-7336-4ccd-bc21-a3120fed5dc3",
+      "name": "15_POST_review_201",
+      "url": "http://localhost:8080/api/products/1/reviews",
+      "method": "POST",
+      "sortNum": 150000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "res-header",
+          "custom": "location",
+          "action": "contains",
+          "value": "/api/products/1/reviews/1"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"stars\": 5,\n  \"author\": \"Ana\",\n  \"text\": \"Boils fast.\"\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "d75e450a-23f1-46f4-916d-61c374f793ac",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "43748da8-7336-4ccd-bc21-a3120fed5dc3",
+      "name": "16_POST_invalid_review_400",
+      "url": "http://localhost:8080/api/products/1/reviews",
+      "method": "POST",
+      "sortNum": 160000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [
+        {
+          "name": "X-Api-Key",
+          "value": "demo-123"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "400"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"stars\": 9,\n  \"author\": \"\",\n  \"text\": \"Bad\"\n}",
+        "form": []
+      }
+    },
+    {
+      "_id": "fbff7d5d-b543-4bbf-a3f4-b6d5799963bf",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "43748da8-7336-4ccd-bc21-a3120fed5dc3",
+      "name": "17_GET_reviews",
+      "url": "http://localhost:8080/api/products/1/reviews",
+      "method": "GET",
+      "sortNum": 170000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "custom": "json[0].author",
+          "action": "equal",
+          "value": "Ana"
+        }
+      ]
+    },
+    {
+      "_id": "1bfb3d91-fb61-4a79-b8eb-412b36dc7cd9",
+      "colId": "64a48043-dcff-4b8c-949f-297b55a66acb",
+      "containerId": "43748da8-7336-4ccd-bc21-a3120fed5dc3",
+      "name": "18_GET_reviews_of_999_404",
+      "url": "http://localhost:8080/api/products/999/reviews",
+      "method": "GET",
+      "sortNum": 180000,
+      "created": "2026-11-18T15:30:00.000Z",
+      "modified": "2026-11-18T15:30:00.000Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "404"
+        },
+        {
+          "type": "res-header",
+          "custom": "content-type",
+          "action": "equal",
+          "value": "application/problem+json"
+        }
+      ]
+    }
+  ]
+}
