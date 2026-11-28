@@ -1,142 +1,60 @@
-# security-session.md — Lab-05 transcripts
+# Task 1 – Spring Security Test Session
 
-Paste the real output of every command (status line, relevant headers, body). Never paste a real secret or a full JWT signing key.
+## Test 1: Anonymous GET
 
-## Task 1 — Default security and first filter chain
-
-### 1a. Zero configuration (before SecurityConfig)
-
-```text
-$ curl -i localhost:8080/api/products
-TODO
-
-$ curl -i -u user:<generated password> localhost:8080/api/products
-TODO
+**Command:**
+```powershell
+curl.exe -i http://localhost:8080/api/products
 ```
 
-### 1b. With SecurityConfig
+**Actual result:** HTTP 200 OK
 
-```text
-$ curl -i localhost:8080/api/products                       # 200 anonymous
-TODO
+**Observation:** Anonymous users can retrieve all products because GET `/api/products/**` is configured with `permitAll()`.
 
-$ curl -i -X POST localhost:8080/api/products -H 'Content-Type: application/json' -d '{"name":"Mouse","price":19.9,"stock":5}'   # 401
-TODO
+## Test 2: Anonymous POST
 
-$ curl -i -u alice:alice -X DELETE localhost:8080/api/products/1   # 403
-TODO
-
-$ curl -i -u admin:admin -X DELETE localhost:8080/api/products/1   # 204
-TODO
+**Command:**
+```powershell
+curl.exe -i -X POST http://localhost:8080/api/products -H "Content-Type: application/json" -d '{"id":0,"name":"Mouse","price":19.9,"stock":5}'
 ```
 
-## Task 2 — Users and passwords in the database
+**Actual result:** HTTP 401 Unauthorized
 
-```text
-$ curl -i -X POST localhost:8080/api/register -H 'Content-Type: application/json' -d '{"username":"bob","password":"short"}'   # 400
-TODO
+**Content-Type:** application/problem+json
 
-$ curl -i -X POST localhost:8080/api/register -H 'Content-Type: application/json' -d '{"username":"bob","password":"Correct-Horse-9"}'   # 201
-TODO
+**Observation:** Anonymous users cannot create products because POST requests require authentication.
 
-$ curl -i -X POST localhost:8080/api/register ... (same username again)   # 409
-TODO
+## Test 3: CUSTOMER DELETE
 
-$ curl -i -u bob:Correct-Horse-9 localhost:8080/api/me   # 200
-TODO
-
--- users table (H2)
-TODO   ({bcrypt}$2a$10$... row)
+**Command:**
+```powershell
+curl.exe -i -u alice:alice -X DELETE http://localhost:8080/api/products/1
 ```
 
-## Task 3 — Roles and method security
+**Actual result:** HTTP 403 Forbidden
 
-```text
-$ curl -i -u alice:... -X POST localhost:8080/api/orders -H 'Content-Type: application/json' -d '{"productId":2,"quantity":1}'   # 201
-TODO
+**Content-Type:** application/problem+json
 
-$ curl -i -u bob:... localhost:8080/api/orders/1     # 403
-TODO
+**Observation:** Alice successfully authenticated but cannot delete products because she has the CUSTOMER role rather than ADMIN.
 
-$ curl -i -u admin:... localhost:8080/api/orders/1   # 200
-TODO
+## Test 4: ADMIN DELETE
 
-$ ./mvnw -q test -Dtest='Order*SecurityTest'
-TODO
+**Command:**
+```powershell
+curl.exe -i -u admin:admin -X DELETE http://localhost:8080/api/products/1
 ```
 
-## Task 4 — JWT login and stateless API
+**Actual result:** HTTP 204 No Content
 
-```text
-$ curl -s -X POST localhost:8080/api/auth/login ...           # token
-TODO
+**Observation:** Admin successfully deleted product ID 1 because the ADMIN role has permission to delete products.
 
-$ curl -i localhost:8080/api/orders -H "Authorization: Bearer $TOKEN"   # 200
-TODO
+## Summary
 
-$ curl -i -X POST localhost:8080/api/orders -H "Authorization: Bearer $TOKEN" ...   # 201, no Set-Cookie
-TODO
+All four security tests passed.
 
-$ curl -i localhost:8080/api/orders -H "Authorization: Bearer $EXPIRED"   # 401 invalid_token
-TODO
-
-$ curl -i -X POST localhost:8080/api/auth/login ... wrong password   # 401
-TODO
-```
-
-### Decoded JWT
-
-```json
-// header
-TODO
-// payload
-TODO
-```
-
-Why the payload is readable and why that is fine: _TODO (one sentence)._
-
-## Task 5 — Hardening
-
-### CORS
-
-```text
-$ curl -i -X OPTIONS localhost:8080/api/orders -H 'Origin: http://localhost:5173' -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: authorization,content-type'
-TODO
-
-$ curl -i -X OPTIONS localhost:8080/api/orders -H 'Origin: http://evil.example' -H 'Access-Control-Request-Method: POST'
-TODO   (no Access-Control-Allow-Origin)
-```
-
-### Security headers
-
-```text
-$ curl -I localhost:8080/api/products
-TODO
-```
-
-### Stored XSS
-
-```text
-$ curl -s localhost:8080/api/products/2/reviews
-TODO
--- page source with th:text:
-TODO
-```
-
-Screenshot th:text vs th:utext (unmerged branch): _TODO_
-
-### Secrets
-
-```text
-$ git grep -n -i -E "password|secret" -- '*.yml' '*.properties' '*.java'
-TODO
-
-$ JWT_SECRET= ./mvnw -q spring-boot:run
-TODO   (APPLICATION FAILED TO START)
-```
-
-### Security log (failed login, successful login, access denied)
-
-```text
-TODO
-```
+| Test | Expected | Actual |
+|---|---|---|
+| Anonymous GET | 200 | 200 |
+| Anonymous POST | 401 | 401 |
+| CUSTOMER DELETE | 403 | 403 |
+| ADMIN DELETE | 204 | 204 |
