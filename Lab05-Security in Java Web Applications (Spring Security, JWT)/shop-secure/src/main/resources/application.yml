@@ -19,3 +19,9 @@ spring:
 #   security:
 #     jwt-secret: ${JWT_SECRET}                          # Task 4
 #     access-token-ttl: 15m
+
+
+shop:
+  seed:
+    admin-password: ${SHOP_ADMIN_PASSWORD:Admin-Dev-Pass-1}
+    customer-password: ${SHOP_CUSTOMER_PASSWORD:Alice-Dev-Pass-1}
